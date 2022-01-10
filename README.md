@@ -1,5 +1,16 @@
 # Hadoop installation Steps :
-These are the steps used for installing the hadoop 3.2.1 (Single Node Cluster Setup). These setups are for the purpose of running the hadoop cluster on a single node. All steps are tested and verified with virtual machines (`Ubuntu 20.04 LTS`). 
+These are the steps used for installing the hadoop 3.2.1 (Single Node Cluster Setup). These setups are for the purpose of running the hadoop cluster on a single node. All steps are tested and verified with virtual machines (**Ubuntu 20.04 LTS**). 
+
+Hadoop excels when deployed in a fully distributed mode on a large cluster of networked servers. However, if you are new to Hadoop and want to explore basic commands or test applications, you can configure Hadoop on a single node.
+
+This setup, also called pseudo-distributed mode, allows each Hadoop daemon to run as a single Java process. A Hadoop environment is configured by editing a set of configuration files:
+
+ - bashrc
+ - hadoop-env.sh
+ - core-site.xml
+ - hdfs-site.xml
+ - mapred-site-xml
+ - yarn-site.xml
 
 -----------------------------------------------------------------------------------------------------------------------------
 ## Installation of Java
@@ -27,7 +38,7 @@ tar -xzf hadoop-3.2.1.tar.gz
 ```
 -----------------------------------------------------------------------------------------------------------------------------
 ## Setup the hadoop environment
-Add the following line in .bashrc file
+Add the following line in .bashrc file. Replace **akilankm** with the your **username**
 ```bash
 # Hadoop Related Options
 export HADOOP_HOME=/home/akilankm/hadoop-3.2.1
@@ -46,14 +57,19 @@ source ~/.bashrc
 ```
 -----------------------------------------------------------------------------------------------------------------------------
 ## Check the java installation location
+If you need help to locate the correct Java path, run the following command in your terminal window:
 ```bash
 which javac
 ```
+Use the provided path to find the OpenJDK directory with the following command:
 ```bash
 readlink -f /usr/bin/javac
 ```
 -----------------------------------------------------------------------------------------------------------------------------
 ## Edit the hadoop-env.sh file
+The hadoop-env.sh file serves as a master file to configure YARN, HDFS, MapReduce, and Hadoop-related project settings.
+
+When setting up a single node Hadoop cluster, you need to define which Java implementation is to be utilized. Use the previously created $HADOOP_HOME variable to access the hadoop-env.sh file:
 ```bash
 sudo nano $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 ```
@@ -63,10 +79,15 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ```
 -----------------------------------------------------------------------------------------------------------------------------
 ## Edit the core-site.xml file
+The core-site.xml file defines HDFS and Hadoop core properties.
+
+To set up Hadoop in a pseudo-distributed mode, you need to specify the URL for your NameNode, and the temporary directory Hadoop uses for the map and reduce process.
+
+Open the core-site.xml file in a text editor:
 ```bash
 sudo nano $HADOOP_HOME/etc/hadoop/core-site.xml
 ```
-Open the file and add the following lines to the file. Open the file and add the following lines to the file. Replace `akilankm` with your `username`.
+Open the file and add the following lines to the file. Open the file and add the following lines to the file. Replace **akilankm** with the your **username**.
 ```bash
 <configuration>
 <property>
@@ -81,10 +102,13 @@ Open the file and add the following lines to the file. Open the file and add the
 ```
 -----------------------------------------------------------------------------------------------------------------------------
 ## Edit the hdfs-site.xml file
+The properties in the hdfs-site.xml file govern the location for storing node metadata, fsimage file, and edit log file. Configure the file by defining the NameNode and DataNode storage directories.
+
+Additionally, the default dfs.replication value of 3 needs to be changed to 1 to match the single node setup.
 ```bash
 sudo nano $HADOOP_HOME/etc/hadoop/hdfs-site.xml
 ```
-Open the file and add the following lines to the file. Replace `akilankm` with your `username`.
+Open the file and add the following lines to the file. Replace **akilankm** with the your **username**.
 ```bash
 <configuration>
 <property>
@@ -103,6 +127,7 @@ Open the file and add the following lines to the file. Replace `akilankm` with y
 ```
 -----------------------------------------------------------------------------------------------------------------------------
 ## Edit the mapred-site.xml file
+Use the following command to access the mapred-site.xml file and define MapReduce values:
 ```bash
 sudo nano $HADOOP_HOME/etc/hadoop/mapred-site.xml
 ```
@@ -117,6 +142,7 @@ Open the file and add the following lines to the file.
 ```
 -----------------------------------------------------------------------------------------------------------------------------
 ## Edit the yarn-site.xml file
+The yarn-site.xml file is used to define settings relevant to YARN. It contains configurations for the Node Manager, Resource Manager, Containers, and Application Master.
 ```bash
 sudo nano $HADOOP_HOME/etc/hadoop/yarn-site.xml
 ```
